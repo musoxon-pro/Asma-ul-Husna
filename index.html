@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#0a2a24">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="99 Asma ul Husna">
+    <link rel="manifest" href="data:application/manifest+json,{
+        %22name%22:%2299%20Asma%20ul%20Husna%22,
+        %22short_name%22:%22Asma%20Husna%22,
+        %22start_url%22:%22.%22,
+        %22display%22:%22standalone%22,
+        %22background_color%22:%22%230a2a24%22,
+        %22theme_color%22:%22%230a2a24%22,
+        %22icons%22:[
+            {%22src%22:%22data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Crect%20width='100'%20height='100'%20fill='%230a2a24'/%3E%3Ctext%20x='50'%20y='67'%20font-size='50'%20text-anchor='middle'%20fill='%23daa845'%20font-family='monospace'%3E☪%3C/text%3E%3C/svg%3E%22,%22sizes%22:%22any%22,%22type%22:%22image/svg+xml%22%7D
+        ]
+    }">
+    <title>99 Asma ul Husna | Allohning ismlari</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a2a24 0%, #04332a 100%);
+            font-family: 'Segoe UI', 'Tahoma', 'Roboto', 'Noto Naskh Arabic', 'Amiri', system-ui, sans-serif;
+            min-height: 100vh;
+            width: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+        }
+
+        /* FULL SCREEN - hech qanday ramka yoki quti yo'q */
+        .fullscreen-app {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            background: linear-gradient(135deg, #0a2a24 0%, #04332a 100%);
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            padding: 1.2rem 1rem 0.8rem;
+            background: rgba(8, 28, 24, 0.7);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(218, 168, 69, 0.3);
+            flex-shrink: 0;
+        }
+        h1 {
+            font-size: 1.8rem;
+            background: linear-gradient(to right, #f9e0a0, #daa845);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        .sub {
+            font-size: 0.8rem;
+            color: #dbc48b;
+            margin-top: 5px;
+        }
+        .arabic-head {
+            font-size: 1.3rem;
+            font-family: 'Noto Naskh Arabic', 'Amiri', serif;
+            direction: rtl;
+            color: #f2ddb3;
+        }
+
+        /* Scroll qilinadigan ro'yxat - FULL WIDTH */
+        .names-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.7rem;
+        }
+        .names-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .names-list::-webkit-scrollbar-track {
+            background: #1e443c;
+            border-radius: 10px;
+        }
+        .names-list::-webkit-scrollbar-thumb {
+            background: #daa845;
+            border-radius: 10px;
+        }
+
+        /* Tugmalar - butun en bo'ylab */
+        .name-btn {
+            width: 100%;
+            background: linear-gradient(105deg, rgba(30, 68, 60, 0.95), rgba(20, 59, 50, 0.95));
+            border: 1px solid #c6a55c;
+            border-radius: 3rem;
+            padding: 1rem 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.2);
+            text-align: left;
+            backdrop-filter: blur(5px);
+        }
+        .name-btn:active {
+            transform: scale(0.98);
+            background: #2a5e52;
+        }
+
+        .btn-left {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .btn-number {
+            font-weight: bold;
+            background: #2a523f;
+            padding: 4px 12px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            color: #f9e2b0;
+            min-width: 42px;
+            text-align: center;
+        }
+        .btn-latin {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #fff6e5;
+        }
+        .btn-arabic {
+            font-size: 1.35rem;
+            font-family: 'Noto Naskh Arabic', 'Amiri', serif;
+            direction: rtl;
+            color: #fbdd9f;
+        }
+
+        /* Modal (popup) - full screen qoplamasi */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(12px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: linear-gradient(135deg, #173e36, #0e2a23);
+            max-width: 500px;
+            width: 85%;
+            border-radius: 2rem;
+            padding: 1.8rem 1.5rem;
+            text-align: center;
+            border: 2px solid #e3bc6e;
+            box-shadow: 0 25px 40px black;
+            animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.92);}
+            to { opacity: 1; transform: scale(1);}
+        }
+        .modal-arabic {
+            font-size: 2.3rem;
+            font-family: 'Noto Naskh Arabic', 'Amiri', serif;
+            color: #ffeaaf;
+            margin-bottom: 0.5rem;
+            word-break: break-word;
+        }
+        .modal-latin {
+            font-size: 1.6rem;
+            font-weight: bold;
+            color: #f8e0a0;
+        }
+        .modal-number {
+            background: #b88b3a;
+            display: inline-block;
+            padding: 4px 16px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            margin: 10px 0;
+        }
+        .modal-meaning {
+            background: #0f221e;
+            padding: 1rem;
+            border-radius: 1.5rem;
+            text-align: left;
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #fff8e7;
+            border-left: 6px solid #eab864;
+            margin: 1rem 0;
+        }
+        .close-modal {
+            background: #c1953b;
+            border: none;
+            font-size: 1rem;
+            padding: 0.6rem 1.5rem;
+            border-radius: 3rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.1s;
+        }
+        .close-modal:active {
+            transform: scale(0.96);
+        }
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            padding: 0.8rem;
+            color: #cbc2a0;
+            background: rgba(8, 28, 24, 0.7);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(218, 168, 69, 0.3);
+            flex-shrink: 0;
+        }
+        .install-banner {
+            background: #2a5e52;
+            margin: 0 1rem 0.5rem 1rem;
+            padding: 0.6rem;
+            border-radius: 3rem;
+            text-align: center;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            border: 1px solid #daa845;
+            flex-shrink: 0;
+        }
+        .install-banner span {
+            font-size: 1.2rem;
+        }
+        @media (max-width: 550px) {
+            .btn-latin { font-size: 0.9rem; }
+            .btn-arabic { font-size: 1.15rem; }
+            .name-btn { padding: 0.8rem 1rem; }
+            .modal-arabic { font-size: 2rem; }
+            .modal-latin { font-size: 1.3rem; }
+            .modal-meaning { font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="fullscreen-app">
+    <div class="header">
+        <div class="arabic-head">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+        <h1>99 Asma ul Husna</h1>
+        <div class="sub">Allohning go‘zal ismlari — bosing, ma’nosi ochiladi</div>
+    </div>
+
+    <div id="namesList" class="names-list">
+        <div style="text-align:center; padding:2rem; color:#dbc48b;">📖 Yuklanmoqda...</div>
+    </div>
+
+    <div id="installBanner" class="install-banner" style="display:none;">
+        <span>📲</span> Ilovani o‘rnatish — Asma ul Husna
+    </div>
+    <footer>“Allohning eng go‘zal ismlari bordir. Bas, U zotni shu ismlar bilan duo qiling.” (A’rof, 180)</footer>
+</div>
+
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <div class="modal-arabic" id="modalArabic">الرَّحْمَٰنُ</div>
+        <div class="modal-latin" id="modalLatin">Ar-Rahmon</div>
+        <div class="modal-number" id="modalNumber">#1</div>
+        <div class="modal-meaning" id="modalMeaning"></div>
+        <button class="close-modal" id="closeModalBtn">Yopish ✖</button>
+    </div>
+</div>
+
+<script>
+    const asmaData = [
+        { number: 1, arabic: "الرَّحْمَٰنُ", latin: "Ar-Rahmon", meaning: "Mehribon, butun dunyo ahli shu dunyoda ne'matlarga ega bo'lgan Zot. Cheksiz rahm egasi." },
+        { number: 2, arabic: "الرَّحِيمُ", latin: "Ar-Rahiym", meaning: "O‘ta rahmli, ayniqsa oxiratda mo‘minlarga rahm qiluvchi." },
+        { number: 3, arabic: "الْمَلِكُ", latin: "Al-Malik", meaning: "Haqiqiy Podshoh, mulk egasi, borliqning mutlaq hukmdori." },
+        { number: 4, arabic: "الْقُدُّوسُ", latin: "Al-Quddus", meaning: "Har qanday nuqsondan pok, barakotli va muqaddas Zot." },
+        { number: 5, arabic: "السَّلَامُ", latin: "As-Salom", meaning: "Tinchlik va salomatlik manbai, har bir ayb va kamchilikdan pok." },
+        { number: 6, arabic: "الْمُؤْمِنُ", latin: "Al-Mu'min", meaning: "Imon va xavfsizlik beruvchi, O‘zining va’dasiga ishonch bilan qaraladigan Zot." },
+        { number: 7, arabic: "الْمُهَيْمِنُ", latin: "Al-Muhaymin", meaning: "Hamma narsani nazorat qiluvchi, qo‘riqlovchi va guvoh." },
+        { number: 8, arabic: "الْعَزِيزُ", latin: "Al-Aziz", meaning: "Qudratli, g‘olib, hech kimga muhtoj bo‘lmagan aziz Zot." },
+        { number: 9, arabic: "الْجَبَّارُ", latin: "Al-Jabbor", meaning: "Irodasini majburan o‘tkazuvchi, taqdirni to‘g‘rilovchi va ulug‘." },
+        { number: 10, arabic: "الْمُتَكَبِّرُ", latin: "Al-Mutakabbir", meaning: "Buyuklik va kibriyo faqat O‘zigagina xos bo‘lgan Zot." },
+        { number: 11, arabic: "الْخَالِقُ", latin: "Al-Xoliq", meaning: "Yaratuvchi, hech bir narsadan avval borliqni taqdir va o‘lchov bilan yaratuvchi." },
+        { number: 12, arabic: "الْبَارِئُ", latin: "Al-Bori'", meaning: "Yaratgan narsalarini mukammal va uyg‘un qilib yuzaga keltiruvchi." },
+        { number: 13, arabic: "الْمُصَوِّرُ", latin: "Al-Musavvir", meaning: "Har bir mavjudotga o‘ziga xos shakl va surat beruvchi." },
+        { number: 14, arabic: "الْغَفَّارُ", latin: "Al-G'affor", meaning: "Bandidan gunohlarini doim yopib turuvchi, kechirimli." },
+        { number: 15, arabic: "الْقَهَّارُ", latin: "Al-Qahhor", meaning: "Hamma narsani O‘z irodasiga bo‘ysundirgan, g‘olib." },
+        { number: 16, arabic: "الْوَهَّابُ", latin: "Al-Vahhob", meaning: "Bepul, keng va doimiy ato etuvchi, ehson qiluvchi." },
+        { number: 17, arabic: "الرَّزَّاقُ", latin: "Ar-Razzoq", meaning: "Barcha tirikchilikka rizq beruvchi, hech kimni unutmaydi." },
+        { number: 18, arabic: "الْفَتَّاحُ", latin: "Al-Fattoh", meaning: "Yopiq eshiklarni ochuvchi, qiyinchiliklarni yengil qiluvchi." },
+        { number: 19, arabic: "الْعَلِيمُ", latin: "Al-'Alim", meaning: "Hamma narsani mutlaq biluvchi, ilohiy bilim egasi." },
+        { number: 20, arabic: "الْقَابِضُ", latin: "Al-Qobid", meaning: "Rizqni qisuvchi, qalblarni qabz qiluvchi, xohlagan vaqtida toraytiruvchi." },
+        { number: 21, arabic: "الْبَاسِطُ", latin: "Al-Bosit", meaning: "Rizqni kengaytiruvchi, qalblarni yoyuvchi va kenglik beruvchi." },
+        { number: 22, arabic: "الْخَافِضُ", latin: "Al-Xofid", meaning: "Kofirlarni va istaganlarini past qiluvchi, martabani tushiruvchi." },
+        { number: 23, arabic: "الرَّافِعُ", latin: "Ar-Rofi'", meaning: "Martabalarni ko‘taruvchi, ayrim bandalarini izzatlab yuksaltiruvchi." },
+        { number: 24, arabic: "الْمُعِزُّ", latin: "Al-Mu'izz", meaning: "Kimni xohlasa izzat va sharaf beruvchi." },
+        { number: 25, arabic: "الْمُذِلُّ", latin: "Al-Muzill", meaning: "Kimni xohlasa xorlik va xo‘rlik beruvchi." },
+        { number: 26, arabic: "السَّمِيعُ", latin: "As-Samiy'", meaning: "Hamma tovushlarni va nidalarni eshituvchi." },
+        { number: 27, arabic: "الْبَصِيرُ", latin: "Al-Bosir", meaning: "Hamma narsani ko‘ruvchi, eng kichik tafsilotlarni ham." },
+        { number: 28, arabic: "الْحَكَمُ", latin: "Al-Hakam", meaning: "Eng adolatli hukm qiluvchi, hukmdor." },
+        { number: 29, arabic: "الْعَدْلُ", latin: "Al-'Adl", meaning: "Mutlaq adolatli, zolimlikdan pok." },
+        { number: 30, arabic: "اللَّطِيفُ", latin: "Al-Latif", meaning: "O‘ta mehribon, noziklik bilan ish qiluvchi, bandalariga yumshoq muomala qiluvchi." },
+        { number: 31, arabic: "الْخَبِيرُ", latin: "Al-Xabir", meaning: "Hamma narsadan butunlay xabardor." },
+        { number: 32, arabic: "الْحَلِيمُ", latin: "Al-Halim", meaning: "Juda halim, gunohkorlarni jazoga shoshilmaydigan." },
+        { number: 33, arabic: "الْعَظِيمُ", latin: "Al-'Azim", meaning: "Ulug‘, buyuk, azamati cheksiz Zot." },
+        { number: 34, arabic: "الْغَفُورُ", latin: "Al-G'ofur", meaning: "Ko‘p kechiruvchi, gunohlarni yopuvchi." },
+        { number: 35, arabic: "الشَّكُورُ", latin: "Ash-Shakur", meaning: "Ozgina yaxshilikka ham ko‘p savob beruvchi, shukr qiluvchi." },
+        { number: 36, arabic: "الْعَلِيُّ", latin: "Al-'Aliyy", meaning: "Eng baland martabali, yuksak Zot." },
+        { number: 37, arabic: "الْكَبِيرُ", latin: "Al-Kabir", meaning: "Buyuk, kattalik faqat Unga xos." },
+        { number: 38, arabic: "الْحَفِيظُ", latin: "Al-Hafiz", meaning: "Hamma narsani saqlovchi, muhofaza qiluvchi." },
+        { number: 39, arabic: "الْمُقِيتُ", latin: "Al-Muqit", meaning: "Har bir jonzotga rizq va quvvat beruvchi." },
+        { number: 40, arabic: "الْحَسِيبُ", latin: "Al-Hasib", meaning: "Hisob-kitob qiluvchi, barcha ishlarni mukofotlovchi." },
+        { number: 41, arabic: "الْجَلِيلُ", latin: "Al-Jalil", meaning: "Ulug‘vor, azamat va kamolot egasi." },
+        { number: 42, arabic: "الْكَرِيمُ", latin: "Al-Karim", meaning: "Saxovatli, karomatli, kechirimi keng." },
+        { number: 43, arabic: "الرَّقِيبُ", latin: "Ar-Raqib", meaning: "Doimiy kuzatuvchi, har bir narsadan xabardor." },
+        { number: 44, arabic: "الْمُجِيبُ", latin: "Al-Mujib", meaning: "Duolarni ijobat qiluvchi, so‘rovlarga javob beruvchi." },
+        { number: 45, arabic: "الْوَاسِعُ", latin: "Al-Vosi'", meaning: "Rahmati va ilmi keng, hech narsa Uncha tor kelmas." },
+        { number: 46, arabic: "الْحَكِيمُ", latin: "Al-Hakim", meaning: "Donishmand, har bir ishni hikmat bilan qiluvchi." },
+        { number: 47, arabic: "الْوَدُودُ", latin: "Al-Wadud", meaning: "Bandalarini sevuvchi va mehr qo‘yguzuvchi." },
+        { number: 48, arabic: "الْمَجِيدُ", latin: "Al-Majid", meaning: "Buyuk saxiy va oliyjanob, ulug‘lovga loyiq." },
+        { number: 49, arabic: "الْبَاعِثُ", latin: "Al-Ba'is", meaning: "O‘limdan keyin tiriltiruvchi, elchilarni yuboruvchi." },
+        { number: 50, arabic: "الشَّهِيدُ", latin: "Ash-Shahid", meaning: "Hamma narsaga guvoh bo‘lgan Zot." },
+        { number: 51, arabic: "الْحَقُّ", latin: "Al-Haqq", meaning: "Mutlaq haqiqat, O‘zi bor va haqdir." },
+        { number: 52, arabic: "الْوَكِيلُ", latin: "Al-Vakil", meaning: "Ishonchli vakil, ishlarni boshqaruvchi, himoya qiluvchi." },
+        { number: 53, arabic: "الْقَوِيُّ", latin: "Al-Qawiyy", meaning: "Quvvati cheksiz kuchli Zot." },
+        { number: 54, arabic: "الْمَتِينُ", latin: "Al-Matin", meaning: "Juda mustahkam, kuchi zo‘r, buzilmas." },
+        { number: 55, arabic: "الْوَلِيُّ", latin: "Al-Waliy", meaning: "Do‘st va yordamchi, mo‘minlarning himoyachisi." },
+        { number: 56, arabic: "الْحَمِيدُ", latin: "Al-Hamid", meaning: "O‘ziga xos barcha maqtovlarga loyiq." },
+        { number: 57, arabic: "الْمُحْصِي", latin: "Al-Muhsiy", meaning: "Hamma narsani hisoblab, sanab turuvchi." },
+        { number: 58, arabic: "الْمُبْدِئُ", latin: "Al-Mubdi'", meaning: "Yaratishni boshlovchi, birinchi marta yaratuvchi." },
+        { number: 59, arabic: "الْمُعِيدُ", latin: "Al-Mu'id", meaning: "Qayta tiriltiruvchi, vafotdan so‘ng yana yaratuvchi." },
+        { number: 60, arabic: "الْمُحْيِي", latin: "Al-Muhyi", meaning: "Tiriklik beruvchi, o‘liklarni tiriltiruvchi." },
+        { number: 61, arabic: "الْمُمِيتُ", latin: "Al-Mumit", meaning: "O‘ldiruvchi, o‘limni yaratuvchi." },
+        { number: 62, arabic: "الْحَيُّ", latin: "Al-Hayy", meaning: "Tirik, abadiy hayot egasi, hech o‘lmas." },
+        { number: 63, arabic: "الْقَيُّومُ", latin: "Al-Qayyum", meaning: "O‘z-o‘zidan turuvchi, butun borliqni boshqaruvchi." },
+        { number: 64, arabic: "الْوَاجِدُ", latin: "Al-Wajid", meaning: "Boy, hech narsaga muhtoj emas, istaganini topuvchi." },
+        { number: 65, arabic: "الْمَاجِدُ", latin: "Al-Majid", meaning: "Olijanob, saxiyligi va yuksakligi ulug‘." },
+        { number: 66, arabic: "الْوَاحِدُ", latin: "Al-Wahid", meaning: "Yagona, bo‘linmas va tengsiz Zot." },
+        { number: 67, arabic: "الْأَحَدُ", latin: "Al-Ahad", meaning: "Yagona, o‘ziga xos birlik, hech kim Unga o‘xshamas." },
+        { number: 68, arabic: "الصَّمَدُ", latin: "As-Samad", meaning: "Hamma muhtoj, O‘zi esa hech kimga muhtoj bo‘lmagan." },
+        { number: 69, arabic: "الْقَادِرُ", latin: "Al-Qodir", meaning: "Qodir, har bir narsaga kuchi yetuvchi." },
+        { number: 70, arabic: "الْمُقْتَدِرُ", latin: "Al-Muqtadir", meaning: "Qudratli, buyruq va irodasi ustun." },
+        { number: 71, arabic: "الْمُقَدِّمُ", latin: "Al-Muqaddim", meaning: "Oldinga suruvchi, bir narsani boshqasidan ustun qiluvchi." },
+        { number: 72, arabic: "الْمُؤَخِّرُ", latin: "Al-Mu'akhkhir", meaning: "Orqaga qoldiruvchi, hikmat bilan kechiktiruvchi." },
+        { number: 73, arabic: "الْأَوَّلُ", latin: "Al-Awwal", meaning: "Avvalgi, boshlanishi bo'lmagan Zot." },
+        { number: 74, arabic: "الْآخِرُ", latin: "Al-Akhir", meaning: "Oxirgi, tugashi bo'lmagan abadiy Zot." },
+        { number: 75, arabic: "الظَّاهِرُ", latin: "Az-Zohir", meaning: "Oshkora, borligi dalillar bilan zohir." },
+        { number: 76, arabic: "الْبَاطِنُ", latin: "Al-Botin", meaning: "Yashirin, zoti idrokdan yuqori." },
+        { number: 77, arabic: "الْوَالِي", latin: "Al-Waliy", meaning: "Hukmdor, hamma ishni boshqaruvchi." },
+        { number: 78, arabic: "الْمُتَعَالِي", latin: "Al-Muta'ali", meaning: "Har qanday ayb va nuqsondan yuksak, ulug‘." },
+        { number: 79, arabic: "الْبَرُّ", latin: "Al-Barr", meaning: "Yaxshilik va ne'mat beruvchi, bandalariga mehribon." },
+        { number: 80, arabic: "التَّوَّابُ", latin: "At-Tawwab", meaning: "Tavbalarni qabul qiluvchi, bandalariga yana yuzlanuvchi." },
+        { number: 81, arabic: "الْمُنْتَقِمُ", latin: "Al-Muntaqim", meaning: "Jinoyatchilardan o‘ch oluvchi, adolatli." },
+        { number: 82, arabic: "الْعَفُوُّ", latin: "Al-'Afuww", meaning: "Jinoyat va gunohlarni butunlay o‘chiruvchi, afv etuvchi." },
+        { number: 83, arabic: "الرَّؤُوفُ", latin: "Ar-Ra'uf", meaning: "O‘ta rahm-shafqatli, mehribon." },
+        { number: 84, arabic: "مَالِكُ الْمُلْكِ", latin: "Malikul-Mulk", meaning: "Mulkning haqiqiy egasi, butun olam podshohi." },
+        { number: 85, arabic: "ذُو الْجَلَالِ وَالْإِكْرَامِ", latin: "Zul-Jalali wal-Ikrom", meaning: "Ulug‘lik va hurmat-karam egasi." },
+        { number: 86, arabic: "الْمُقْسِطُ", latin: "Al-Muqsit", meaning: "Adolat bilan taqsimlovchi, zulmdan pok." },
+        { number: 87, arabic: "الْجَامِعُ", latin: "Al-Jomi'", meaning: "Jamlovchi, qiyomat kuni hamma maxluqotni yig‘uvchi." },
+        { number: 88, arabic: "الْغَنِيُّ", latin: "Al-G'aniyy", meaning: "Barcha boyliklarga ega, hech narsaga muhtoj emas." },
+        { number: 89, arabic: "الْمُغْنِي", latin: "Al-Mughni", meaning: "Boyitadigan, kimsalarni ehtiyojsiz qiluvchi." },
+        { number: 90, arabic: "الْمَانِعُ", latin: "Al-Mani'", meaning: "To‘suvchi, xohlagan narsani berishdan to‘suvchi." },
+        { number: 91, arabic: "الضَّارُ", latin: "Ad-Dorr", meaning: "Zarar yetkazuvchi, ammo faqat hikmat bilan." },
+        { number: 92, arabic: "النَّافِعُ", latin: "An-Nofi'", meaning: "Foyda beruvchi, xohlagan kishiga manfaat yetkazuvchi." },
+        { number: 93, arabic: "النُّورُ", latin: "An-Nur", meaning: "Nur, butun borliqni yorituvchi va hidoyat beruvchi." },
+        { number: 94, arabic: "الْهَادِي", latin: "Al-Hadi", meaning: "Hidoyat qiluvchi, to‘g‘ri yo‘l ko‘rsatuvchi." },
+        { number: 95, arabic: "الْبَدِيعُ", latin: "Al-Badi'", meaning: "Namunasiz va o‘xshashsiz yaratuvchi." },
+        { number: 96, arabic: "الْبَاقِي", latin: "Al-Baqi", meaning: "Abadiy qoluvchi, yo‘q bo‘lmas." },
+        { number: 97, arabic: "الْوَارِثُ", latin: "Al-Warith", meaning: "Barcha narsaning haqiqiy merosxo‘ri, hamma o‘tkinchi." },
+        { number: 98, arabic: "الرَّشِيدُ", latin: "Ar-Rashid", meaning: "To‘g‘ri yo‘lga boshlovchi, eng to‘g‘ri va dono." },
+        { number: 99, arabic: "الصَّبُورُ", latin: "As-Sabur", meaning: "Juda sabrli, gunohkorlarni tez jazolamaydigan." }
+    ];
+
+    const namesContainer = document.getElementById('namesList');
+    const modal = document.getElementById('modal');
+    const modalArabic = document.getElementById('modalArabic');
+    const modalLatin = document.getElementById('modalLatin');
+    const modalNumber = document.getElementById('modalNumber');
+    const modalMeaning = document.getElementById('modalMeaning');
+    const closeBtn = document.getElementById('closeModalBtn');
+
+    function renderButtons() {
+        namesContainer.innerHTML = '';
+        asmaData.forEach(item => {
+            const button = document.createElement('button');
+            button.className = 'name-btn';
+            button.innerHTML = `
+                <div class="btn-left">
+                    <span class="btn-number">${item.number}</span>
+                    <span class="btn-latin">${item.latin}</span>
+                </div>
+                <div class="btn-arabic">${item.arabic}</div>
+            `;
+            button.addEventListener('click', () => openModal(item));
+            namesContainer.appendChild(button);
+        });
+    }
+
+    function openModal(item) {
+        modalArabic.textContent = item.arabic;
+        modalLatin.textContent = item.latin;
+        modalNumber.textContent = `#${item.number}`;
+        modalMeaning.innerHTML = `<span style="font-weight:bold; display:block; margin-bottom:8px;">✨ Ma'no va mazmuni:</span> ${item.meaning}`;
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModalFunc() {
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    closeBtn.addEventListener('click', closeModalFunc);
+    window.addEventListener('click', (e) => {
+        if (e.target === modal) closeModalFunc();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.style.display === 'flex') closeModalFunc();
+    });
+
+    // PWA o'rnatish
+    let deferredPrompt;
+    const installBanner = document.getElementById('installBanner');
+    
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        installBanner.style.display = 'flex';
+    });
+    
+    installBanner.addEventListener('click', async () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                installBanner.style.display = 'none';
+            }
+            deferredPrompt = null;
+        }
+    });
+
+    renderButtons();
+</script>
+</body>
+</html>
